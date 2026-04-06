@@ -1,0 +1,52 @@
+CHIP ALU {
+    IN
+        x[16], y[16],
+        zx, nx, zy, ny, f, no;
+
+    OUT
+        out[16],
+        zr,
+        ng,
+        result;
+
+    PARTS:
+    Mux16(a=x, b=false, sel=zx, out=x1);
+    Not16(in=x1, out=notx1);
+    Mux16(a=x1, b=notx1, sel=nx, out=x2);
+
+    Mux16(a=y, b=false, sel=zy, out=y1);
+    Not16(in=y1, out=noty1);
+    Mux16(a=y1, b=noty1, sel=ny, out=y2);
+
+    And16(a=x2, b=y2, out=andOut);
+    Add16(a=x2, b=y2, out=addOut);
+    Mux16(a=andOut, b=addOut, sel=f, out=aluCore);
+
+    Not16(in=aluCore, out=notAluCore);
+    Mux16(a=aluCore, b=notAluCore, sel=no, out=normalOut);
+
+    Or(a=zx, b=nx, out=orA);
+    Or(a=zy, b=ny, out=orB);
+    Or(a=orA, b=orB, out=anyOne);
+    Not(in=anyOne, out=allZero);
+    And(a=allZero, b=no, out=shiftCmd);
+
+    Shifter(in=x, direction=f, out=shiftOut, result=shiftBit);
+
+    Mux16(
+        a=normalOut,
+        b=shiftOut,
+        sel=shiftCmd,
+        out=out,
+        out[0..7]=outLow,
+        out[8..15]=outHigh,
+        out[15]=ng
+    );
+
+    Mux(a=false, b=shiftBit, sel=shiftCmd, out=result);
+
+    Or8Way(in=outLow, out=orLow);
+    Or8Way(in=outHigh, out=orHigh);
+    Or(a=orLow, b=orHigh, out=orAny);
+    Not(in=orAny, out=zr);
+}
