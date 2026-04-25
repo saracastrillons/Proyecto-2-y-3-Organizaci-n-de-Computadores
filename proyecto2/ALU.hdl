@@ -1,0 +1,86 @@
+CHIP ALU {
+    IN
+        x[16], y[16],
+        zx,
+        nx,
+        zy,
+        ny,
+        f,
+        no;
+
+    OUT
+        out[16],
+        zr,
+        ng,
+        result;
+
+    PARTS:
+
+    Or(a=zx, b=nx, out=or1);
+    Or(a=zy, b=ny, out=or2);
+    Or(a=or1, b=or2, out=or3);
+    Not(in=or3, out=firstFourZero);
+    And(a=firstFourZero, b=no, out=isShift);
+
+    Mux16(a=x, b=false, sel=zx, out=xZero);
+    Not16(in=xZero, out=xNot);
+    Mux16(a=xZero, b=xNot, sel=nx, out=xFinal);
+
+    Mux16(a=y, b=false, sel=zy, out=yZero);
+    Not16(in=yZero, out=yNot);
+    Mux16(a=yZero, b=yNot, sel=ny, out=yFinal);
+
+    Add16(a=xFinal, b=yFinal, out=addOut);
+    And16(a=xFinal, b=yFinal, out=andOut);
+    Mux16(a=andOut, b=addOut, sel=f, out=fOut);
+
+    Not16(in=fOut, out=notFOut);
+    Mux16(a=fOut, b=notFOut, sel=no, out=normalOut);
+
+    Shifter(in=x, direction=f, out=shiftOut, result=shiftResult);
+
+    Mux16(
+        a=normalOut,
+        b=shiftOut,
+        sel=isShift,
+        out=out,
+        out[0]=o0,
+        out[1]=o1,
+        out[2]=o2,
+        out[3]=o3,
+        out[4]=o4,
+        out[5]=o5,
+        out[6]=o6,
+        out[7]=o7,
+        out[8]=o8,
+        out[9]=o9,
+        out[10]=o10,
+        out[11]=o11,
+        out[12]=o12,
+        out[13]=o13,
+        out[14]=o14,
+        out[15]=ng
+    );
+
+    Mux(a=false, b=shiftResult, sel=isShift, out=result);
+
+    Or(a=o0, b=o1, out=zr01);
+    Or(a=o2, b=o3, out=zr23);
+    Or(a=o4, b=o5, out=zr45);
+    Or(a=o6, b=o7, out=zr67);
+    Or(a=o8, b=o9, out=zr89);
+    Or(a=o10, b=o11, out=zr1011);
+    Or(a=o12, b=o13, out=zr1213);
+    Or(a=o14, b=ng, out=zr1415);
+
+    Or(a=zr01, b=zr23, out=zr03);
+    Or(a=zr45, b=zr67, out=zr47);
+    Or(a=zr89, b=zr1011, out=zr811);
+    Or(a=zr1213, b=zr1415, out=zr1215);
+
+    Or(a=zr03, b=zr47, out=zr07);
+    Or(a=zr811, b=zr1215, out=zr815);
+
+    Or(a=zr07, b=zr815, out=notZero);
+    Not(in=notZero, out=zr);
+}
