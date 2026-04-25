@@ -1,0 +1,130 @@
+/***
+ *  instrucciones shift left y shift right
+ ***/
+
+Las instrucciones tipo C tienen la forma
+
+111 a cccccc ddd jjj
+
+Donde
+- a indica si se usa A (0) o M (1)
+- cccccc son los bits de control de la ALU
+- ddd es el destino (A, D, M)
+- jjj son saltos (no se usan aquí → 000)
+
+
+Para implementar shift en la ALU se usa esta condición
+
+zx = 0
+nx = 0
+zy = 0
+ny = 0
+no = 1
+
+Cuando se cumple esto, la ALU entra en modo shift.
+
+La dirección del corrimiento depende de f:
+
+- f = 0 → shift left (<<1)
+- f = 1 → shift right (>>1)
+
+
+En esta implementación, el Shifter recibe la entrada x de la ALU.
+
+Por lo tanto el valor que se desplaza es siempre el registro D
+
+
+
+SHIFT LEFT
+--------------------------------------------------
+
+Sintaxis:
+dest = D << 1
+
+Ejemplo:
+D = D << 1
+
+Bits:
+zx=0, nx=0, zy=0, ny=0, f=0, no=1
+
+Entonces:
+cccccc = 000001
+
+Formato:
+111 a 000001 ddd 000
+
+Ejemplo:
+
+D = D << 1
+
+a = 0
+dest = D → ddd = 010
+
+Binario:
+111 0 000001 010 000
+
+Resultado:
+1110000001010000
+
+
+
+SHIFT RIGHT
+--------------------------------------------------
+
+Sintaxis:
+dest = D >> 1
+
+Ejemplo:
+AM = D >> 1
+
+Bits:
+zx=0, nx=0, zy=0, ny=0, f=1, no=1
+
+Entonces:
+cccccc = 000011
+
+Formato:
+111 a 000011 ddd 000
+
+Ejemplo:
+
+AM = D >> 1
+
+a = 0
+dest = AM → ddd = 101
+
+Binario:
+111 0 000011 101 000
+
+Resultado:
+1110000011101000
+
+
+
+DESTINOS (ddd)
+--------------------------------------------------
+
+d1 → A
+d2 → D
+d3 → M
+
+Destino | d1 d2 d3
+--------|----------
+M       | 0  0  1
+D       | 0  1  0
+MD      | 0  1  1
+A       | 1  0  0
+AM      | 1  0  1
+AD      | 1  1  0
+AMD     | 1  1  1
+
+
+Entonces
+
+Instrucción   cccccc
+--------------------
+D << 1        000001
+D >> 1        000011
+
+Los saltos siempre son 000.
+El bit a no afecta el resultado porque el shift usa x (D).
