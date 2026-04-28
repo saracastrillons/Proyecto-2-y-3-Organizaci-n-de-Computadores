@@ -1,0 +1,11 @@
+@5
+D=A
+D=D<<1
+D=A<<1
+D=M<<1
+AM=D>>1
+D=A>>1
+D=M>>1
+(LOOP)
+@LOOP
+0;JMP
