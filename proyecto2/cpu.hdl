@@ -1,3 +1,13 @@
+/*********
+* CPU.hdl – Unidad Central de Procesamiento:
+* Ejecuta instrucciones tipo A y tipo C del computador Hack.
+* Controla los registros A y D, la ALU, la escritura en memoria
+* y el contador de programa PC.
+* Recibe instrucciones desde la ROM y datos desde la memoria.
+* Autor 1: Sara Castrillón Sánchez
+* Autor 2: Alejandro Cadavid
+*********/
+
 CHIP CPU {
     IN  inM[16], instruction[16], reset;
     OUT outM[16], writeM, addressM[15], pc[15];
