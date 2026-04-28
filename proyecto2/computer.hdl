@@ -1,3 +1,13 @@
+/*********
+* Computer.hdl – Computador Hack completo:
+* Integra ROM32K, CPU y Memory.
+* La ROM entrega las instrucciones, la CPU las ejecuta
+* y Memory permite leer o escribir datos en RAM, Screen o Keyboard.
+* El reset reinicia la ejecución del programa desde la dirección 0.
+* Autor 1: Sara Castrillón Sánchez
+* Autor 2: Alejandro Cadavid
+*********/
+
 CHIP Computer {
     IN reset;
 
