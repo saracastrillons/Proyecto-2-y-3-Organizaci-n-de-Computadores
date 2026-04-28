@@ -1,3 +1,13 @@
+/*********
+* Memory.hdl – Memoria principal del computador Hack:
+* Conecta y controla el acceso a RAM16K, Screen y Keyboard.
+* Usa la dirección address para decidir si se accede a RAM,
+* pantalla o teclado.
+* Permite escribir en RAM o Screen cuando load = 1.
+* Autor 1: Sara Castrillón Sánchez
+* Autor 2: Alejandro Cadavid
+*********/
+
 CHIP Memory {
     IN in[16], load, address[15];
     OUT out[16];
